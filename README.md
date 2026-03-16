@@ -282,21 +282,6 @@ Rules were designed with clinical domain experts against CPOT/FLACC behavioural 
 
 ---
 
-## Citation
-
-```bibtex
-@article{elothmani2026uagmf,
-  title   = {{UAG-MF}: Uncertainty-aware generative multimodal fusion for
-             continuous pain estimation in non-verbal patients under clinical occlusions},
-  author  = {El Othmani, Oussama and Naouali, Sami},
-  journal = {PLOS Digital Health},
-  year    = {2026},
-  doi     = {10.1371/journal.pdig.XXXXXXX}
-}
-```
-
----
-
 ## Important Limitations
 
 - All occlusion robustness results use **synthetically applied** geometric masks; validation under naturally occurring ICU occlusions requires prospective study.
