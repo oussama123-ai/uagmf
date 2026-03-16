@@ -1,0 +1,110 @@
+# configs/default.yaml
+# UAG-MF hyperparameters — all values from Table 2 of the paper
+
+data:
+  dataset: "biovid"
+  data_root: "data/features"
+  num_workers: 8
+  pin_memory: true
+  fps: 25
+  clip_frames: 64           # frames per temporal window
+  clip_stride: 32           # 50% overlap during training
+  clip_stride_eval: 8
+  img_size: 112             # spatial input size
+  nrs_min: 0.0
+  nrs_max: 10.0
+  n_folds: 5
+  fold: 0
+
+model:
+  # Video encoder
+  video_backbone: "mobilenet_v3_small"   # 4.2M params
+  video_pretrained: true
+  video_output_dim: 256
+  video_dropout: 0.3
+
+  # TCN (all modalities)
+  tcn_layers: 3
+  tcn_kernel_size: 3
+  tcn_dilations: [1, 2, 4]
+  tcn_hidden_dim: 128
+
+  # Cross-attention fusion
+  fusion_heads: 8
+  fusion_d_model: 256
+  fusion_d_ff: 512
+  fusion_layers: 2
+  fusion_modality_dropout: 0.3
+
+  # Temporal Transformer
+  temporal_layers: 2
+  temporal_heads: 8
+  temporal_dropout: 0.3
+
+  # Generative reconstruction
+  generator_type: "unet"     # 5-block U-Net
+  discriminator_type: "patchgan"   # 70×70
+  vae_latent_dim: 256
+  vae_beta: 0.5
+  recon_l1_weight: 10.0
+  recon_perceptual_weight: 1.0
+
+  # UQ
+  mc_dropout_samples: 50
+  ensemble_size: 5
+  alert_threshold: 0.35      # τ* = 0.35 (Youden-optimal)
+  residual_inflation_gamma: 0.05
+  modality_penalty_delta: 0.08
+
+  # Symbolic engine
+  rules_path: "rules/symbolic_rules.json"
+  n_concept_activations: 12
+  n_rules: 18
+
+training:
+  optimizer: "adamw"
+  lr: 1.0e-3
+  weight_decay: 1.0e-4
+  lr_schedule: "cosine"
+  warmup_epochs: 5
+  batch_size: 16
+  epochs: 100
+  early_stopping_patience: 15
+  grad_clip_max_norm: 1.0
+  amp: true
+  seed: 42
+
+  # Loss weights (Eq. 1 in paper)
+  loss_huber_weight: 1.0
+  loss_recon_weight: 0.5      # λ₁
+  loss_uq_nll_weight: 0.2     # λ₂
+  loss_l1_weight: 10.0        # λ_l1
+  loss_perceptual_weight: 1.0 # λ_perc
+
+  save_every_n_epochs: 10
+  val_every_n_epochs: 1
+
+hardware:
+  gpus: 1
+  distributed_backend: "nccl"
+
+evaluation:
+  metrics: ["mse", "rmse", "mae", "pcc", "icc", "qwk", "ece"]
+  bootstrap_samples: 1000
+  ece_bins: 15
+  qwk_thresholds: [1.5, 3.5, 6.5]   # no pain / mild / moderate / severe
+
+federated:
+  n_sites: 3
+  rounds: 50
+  local_epochs: 10
+  client_fraction: 0.75
+  dp_epsilon: 8.0
+  dp_delta: 1.0e-5
+  dp_max_grad_norm: 1.0
+  aggregation: "fedavg"
+
+logging:
+  log_dir: "logs"
+  tensorboard: true
+  log_interval: 50

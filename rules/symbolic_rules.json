@@ -1,0 +1,118 @@
+{
+  "_comment": "UAG-MF symbolic rule set. 18 rules over 12 concept activations.",
+  "_paper": "El Othmani & Naouali, PLOS Digital Health 2026, Section 3.6",
+  "_warning": "Sensitivity of ΔMSE=0.11 contribution to this specific rule instantiation has not been formally evaluated. See Section 3.6 (Limitations) of the paper.",
+  "_design": "Rules designed with clinical domain experts against CPOT/FLACC behavioural indicators.",
+  "concepts": [
+    {"index": 0,  "name": "c_hrv_up",    "description": "HRV elevation (sympathetic activation)"},
+    {"index": 1,  "name": "c_hrv_down",  "description": "HRV suppression (opioid effect / deep sedation)"},
+    {"index": 2,  "name": "c_spo2_down", "description": "SpO2 decrease below threshold"},
+    {"index": 3,  "name": "c_resp_up",   "description": "Respiratory rate increase"},
+    {"index": 4,  "name": "c_au4",       "description": "AU4 brow lowerer (FACS pain indicator)"},
+    {"index": 5,  "name": "c_au6",       "description": "AU6 cheek raiser / orbital tighten"},
+    {"index": 6,  "name": "c_au9",       "description": "AU9 nose wrinkler"},
+    {"index": 7,  "name": "c_au10",      "description": "AU10 upper lip raiser"},
+    {"index": 8,  "name": "c_au25",      "description": "AU25 lips part"},
+    {"index": 9,  "name": "c_cry",       "description": "Vocalisation / cry (acoustic, optional)"},
+    {"index": 10, "name": "c_grimace",   "description": "General grimace composite"},
+    {"index": 11, "name": "c_neutral",   "description": "Neutral facial expression (no pain markers)"}
+  ],
+  "tier_descriptions": {
+    "1": "Concurrent physiological + facial + optional acoustic indicators. Highest confidence.",
+    "2": "Consensus from any two indicator domains. Moderate confidence.",
+    "3": "Conflicting signals between domains. Escalates sigma^2 by +0.15, triggering alert."
+  },
+  "alert_threshold": 0.35,
+  "tier3_escalation": 0.15,
+  "rules": [
+    {"tier": 1, "conditions": ["c_hrv_up", "c_au4", "c_cry"],
+     "output_pain_level": 8.0, "weight": 1.2,
+     "explanation": "High pain: HRV elevation + AU4 brow lowerer + vocalisation",
+     "conflicts_with": []},
+
+    {"tier": 1, "conditions": ["c_hrv_up", "c_au6", "c_grimace"],
+     "output_pain_level": 7.5, "weight": 1.1,
+     "explanation": "High pain: HRV elevation + orbital tighten + grimace",
+     "conflicts_with": []},
+
+    {"tier": 1, "conditions": ["c_resp_up", "c_au9", "c_au25"],
+     "output_pain_level": 7.0, "weight": 1.1,
+     "explanation": "High pain: respiratory distress + nose wrinkler + lips part",
+     "conflicts_with": []},
+
+    {"tier": 1, "conditions": ["c_hrv_up", "c_resp_up", "c_au4", "c_au10"],
+     "output_pain_level": 9.0, "weight": 1.3,
+     "explanation": "Severe pain: multi-physiological activation + brow/lip AUs",
+     "conflicts_with": []},
+
+    {"tier": 1, "conditions": ["c_spo2_down", "c_au6", "c_au9"],
+     "output_pain_level": 7.5, "weight": 1.0,
+     "explanation": "High pain: SpO2 decrease + bilateral facial AUs",
+     "conflicts_with": []},
+
+    {"tier": 1, "conditions": ["c_hrv_up", "c_grimace", "c_cry"],
+     "output_pain_level": 8.5, "weight": 1.2,
+     "explanation": "High pain: HRV + grimace + acoustic vocalisation",
+     "conflicts_with": []},
+
+    {"tier": 2, "conditions": ["c_hrv_up", "c_au4"],
+     "output_pain_level": 5.5, "weight": 1.0,
+     "explanation": "Moderate pain: HRV elevation + brow lowerer",
+     "conflicts_with": []},
+
+    {"tier": 2, "conditions": ["c_spo2_down", "c_au6"],
+     "output_pain_level": 5.0, "weight": 1.0,
+     "explanation": "Moderate pain: SpO2 decrease + cheek raise",
+     "conflicts_with": []},
+
+    {"tier": 2, "conditions": ["c_resp_up", "c_grimace"],
+     "output_pain_level": 5.5, "weight": 1.0,
+     "explanation": "Moderate pain: respiratory increase + grimace",
+     "conflicts_with": []},
+
+    {"tier": 2, "conditions": ["c_au4", "c_au25"],
+     "output_pain_level": 4.0, "weight": 0.9,
+     "explanation": "Mild-moderate pain: facial AUs only (no physiological confirmation)",
+     "conflicts_with": []},
+
+    {"tier": 2, "conditions": ["c_hrv_up", "c_au9"],
+     "output_pain_level": 5.0, "weight": 1.0,
+     "explanation": "Moderate pain: HRV + nose wrinkler",
+     "conflicts_with": []},
+
+    {"tier": 2, "conditions": ["c_resp_up", "c_au4"],
+     "output_pain_level": 5.0, "weight": 1.0,
+     "explanation": "Moderate pain: respiratory + brow",
+     "conflicts_with": []},
+
+    {"tier": 3, "conditions": ["c_hrv_up", "c_neutral"],
+     "output_pain_level": 0.0, "weight": 1.0,
+     "explanation": "Conflict: HRV elevated but facial expression is neutral (expression suppression? sedation?)",
+     "conflicts_with": ["c_neutral"]},
+
+    {"tier": 3, "conditions": ["c_au4", "c_hrv_down"],
+     "output_pain_level": 0.0, "weight": 1.0,
+     "explanation": "Conflict: pain AU active but HRV suppressed (opioid effect?)",
+     "conflicts_with": ["c_hrv_down"]},
+
+    {"tier": 3, "conditions": ["c_spo2_down", "c_neutral"],
+     "output_pain_level": 0.0, "weight": 1.0,
+     "explanation": "Conflict: SpO2 decrease but neutral face",
+     "conflicts_with": ["c_neutral"]},
+
+    {"tier": 3, "conditions": ["c_grimace", "c_hrv_down"],
+     "output_pain_level": 0.0, "weight": 1.0,
+     "explanation": "Conflict: grimace with cardiac suppression (unusual pattern)",
+     "conflicts_with": ["c_hrv_down"]},
+
+    {"tier": 3, "conditions": ["c_resp_up", "c_neutral"],
+     "output_pain_level": 0.0, "weight": 1.0,
+     "explanation": "Conflict: respiratory distress but neutral facial expression",
+     "conflicts_with": ["c_neutral"]},
+
+    {"tier": 3, "conditions": ["c_au6", "c_hrv_down"],
+     "output_pain_level": 0.0, "weight": 1.0,
+     "explanation": "Conflict: orbital AU active but HRV suppressed",
+     "conflicts_with": ["c_hrv_down"]}
+  ]
+}

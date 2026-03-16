@@ -1,0 +1,10 @@
+# configs/unbc.yaml
+defaults:
+  - default
+data:
+  dataset: "unbc"
+  modalities: ["video"]      # video only; physio channels zeroed
+  n_subjects: 129
+  n_frames: 48398
+  fps: 25
+  annotation: "pspi"         # frame-level; FACS coder; κ=0.79

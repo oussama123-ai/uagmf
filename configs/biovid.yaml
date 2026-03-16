@@ -1,0 +1,17 @@
+# configs/biovid.yaml
+# BioVid Heat Pain Database
+# 87 subjects (19–65 yr), 8,700 clips
+# Modalities: Video, HRV, SCL, Resp
+# Annotation: PSPI from OpenFace; 2 raters; IRR κ=0.81
+
+defaults:
+  - default
+
+data:
+  dataset: "biovid"
+  modalities: ["video", "hrv", "sco2", "resp"]
+  n_subjects: 87
+  n_clips: 8700
+  fps: 25
+  annotation: "pspi"     # 5-class ordinal; classes 4+5 merged for QWK
+  irr_kappa: 0.81

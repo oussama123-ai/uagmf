@@ -1,0 +1,10 @@
+# configs/emopain.yaml
+defaults:
+  - default
+data:
+  dataset: "emopain"
+  modalities: ["video", "hrv", "resp"]
+  n_subjects: 60
+  n_sequences: 2100
+  fps: 25
+  annotation: "nrs_continuous"  # continuous NRS; 2 raters; κ=0.76
