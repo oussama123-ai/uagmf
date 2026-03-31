@@ -8,7 +8,7 @@ Official implementation of:
 
 > **UAG-MF: Uncertainty-aware generative multimodal fusion for continuous pain estimation in non-verbal patients under clinical occlusions**  
 > Oussama El Othmani, Sami Naouali  
-> *PLOS Digital Health*, 2026  
+> 2026  
 > GitHub: https://github.com/oussama123-ai/uagmf
 
 ---
