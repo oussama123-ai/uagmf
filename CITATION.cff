@@ -11,11 +11,11 @@ authors:
     affiliation: "King Faisal University, Saudi Arabia"
 title: "UAG-MF: Uncertainty-aware generative multimodal fusion for continuous pain estimation in non-verbal patients under clinical occlusions"
 version: 1.1.0
-doi: 10.5281/zenodo.XXXXXXX
-date-released: 2026-09-24
+doi: 10.5281/zenodo.22698497
+date-released: 2026-09-11
 license: MIT
 repository-code: "https://github.com/oussama123-ai/uagmf"
-url: "https://github.com/oussama123-ai/uagmf"
+url: "https://zenodo.org/records/22698497"
 keywords:
   - pain assessment
   - multimodal fusion
