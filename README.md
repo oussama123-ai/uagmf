@@ -282,6 +282,24 @@ Rules were designed with clinical domain experts against CPOT/FLACC behavioural 
 
 ---
 
+## LOSO Cross-Validation
+
+In addition to 5-fold subject-independent CV, we provide full
+**Leave-One-Subject-Out (LOSO)** cross-validation:
+
+```bash
+# BioVid (87 folds)
+python scripts/train_loso.py --config configs/loso.yaml --dataset biovid
+
+# UNBC-McMaster (129 folds)
+python scripts/train_loso.py --config configs/loso.yaml --dataset unbc
+
+# EmoPain (60 folds)
+python scripts/train_loso.py --config configs/loso.yaml --dataset emopain
+
+```
+----
+
 ## Important Limitations
 
 - All occlusion robustness results use **synthetically applied** geometric masks; validation under naturally occurring ICU occlusions requires prospective study.
