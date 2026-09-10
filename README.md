@@ -186,7 +186,34 @@ python scripts/federated_sim.py \
     --rounds 50 --local_epochs 10 \
     --dp_epsilon 8.0 --dp_delta 1e-5
 ```
+### Leave-One-Subject-Out (LOSO) Cross-Validation
 
+In addition to 5-fold subject-independent CV, we provide full
+**Leave-One-Subject-Out (LOSO)** cross-validation, the gold-standard
+protocol for clinical AI generalization to previously unseen individuals.
+
+```bash
+# BioVid (87 folds — one per subject)
+python scripts/train_loso.py \
+    --config configs/loso.yaml \
+    --dataset biovid \
+    --data_root /path/to/data \
+    --output_dir results/loso
+
+# UNBC-McMaster (129 folds)
+python scripts/train_loso.py \
+    --config configs/loso.yaml \
+    --dataset unbc \
+    --data_root /path/to/data \
+    --output_dir results/loso
+
+# EmoPain (60 folds)
+python scripts/train_loso.py \
+    --config configs/loso.yaml \
+    --dataset emopain \
+    --data_root /path/to/data \
+    --output_dir results/loso
+```
 ---
 
 ## Evaluation
