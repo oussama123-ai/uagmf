@@ -1,0 +1,99 @@
+# UAG-MF configuration for Leave-One-Subject-Out (LOSO) cross-validation
+# 
+# Run:
+#   python scripts/train_loso.py --config configs/loso.yaml --dataset biovid
+#   python scripts/train_loso.py --config configs/loso.yaml --dataset unbc
+#   python scripts/train_loso.py --config configs/loso.yaml --dataset emopain
+
+protocol: loso
+seed: 42
+
+# ── Datasets ─────────────────────────────────────────────────
+datasets:
+  - name: biovid
+    root: /path/to/BioVid
+    num_subjects: 87
+    modalities: [video, hrv, spo2, resp]
+  - name: unbc
+    root: /path/to/UNBC
+    num_subjects: 129
+    modalities: [video]
+  - name: emopain
+    root: /path/to/EmoPain
+    num_subjects: 60
+    modalities: [video, hrv, resp]
+
+# ── Model architecture (same as 5-fold CV) ───────────────────
+model:
+  video_encoder:
+    backbone: mobilenetv3_small
+    input_size: [112, 112]
+    output_dim: 256
+    dropout: 0.3
+
+  cnn_tcn:
+    layers: 3
+    kernel_size: 3
+    dilation_factors: [1, 2, 4]
+    hidden_dim: 128
+    residual: true
+
+  fusion:
+    heads: 8
+    d_model: 256
+    d_ff: 512
+    layers: 2
+    modality_dropout: 0.3
+
+  transformer:
+    layers: 2
+    heads: 8
+    positional_encoding: sinusoidal
+    dropout: 0.3
+
+  generative:
+    generator: unet_5block
+    discriminator: patchgan_70
+    vae_latent_dim: 256
+    beta: 0.5
+    lambda_l1: 10
+    lambda_perc: 1
+
+  uq:
+    mc_samples: 50
+    ensemble_size: 5
+    alert_threshold: 0.35
+    mixing_weight: [0.5, 0.5]
+    test_dropout: 0.3
+    gamma_residual: 0.05
+    delta_u: 0.08
+
+# ── Training ─────────────────────────────────────────────────
+training:
+  optimizer: adamw
+  learning_rate: 1.0e-3
+  lr_schedule: cosine
+  batch_size: 16
+  epochs: 100
+  early_stopping_patience: 15
+  gradient_clip: 1.0
+  lambda_recon: 0.5
+  lambda_uq: 0.2
+
+# ── Occlusion ────────────────────────────────────────────────
+occlusion:
+  types: [none, mask, tube, partial]
+  train_frames: 4200
+  ratio_range: [0.0, 0.8]
+
+# ── Logging ──────────────────────────────────────────────────
+logging:
+  log_dir: ./logs/loso
+  save_dir: ./checkpoints/loso
+  results_file: ./results/loso_results.json
+
+# ── Expected results (from manuscript Table 9) ───────────────
+# Dataset   | MSE (5-fold) | MSE (LOSO) | Gap
+# BioVid    | 1.17         | 1.28       | +9.4%
+# UNBC      | 1.33         | 1.45       | +9.0%
+# EmoPain   | 1.71         | 1.82       | +6.4%
