@@ -1,0 +1,41 @@
+{
+  "title": "UAG-MF: Uncertainty-aware generative multimodal fusion for continuous pain estimation in non-verbal patients under clinical occlusions",
+  "description": "Official code repository for UAG-MF. Contains training scripts, model implementations, LOSO cross-validation, ablation studies, federated learning simulation, and figure generation code. All results reported in the manuscript are fully reproducible.",
+  "creators": [
+    {
+      "name": "El Othmani, Oussama",
+      "affiliation": "Military Academy of Fondouk Jedid, Tunisia",
+      "orcid": "0009-0000-4229-1422"
+    },
+    {
+      "name": "Naouali, Sami",
+      "affiliation": "King Faisal University, Saudi Arabia",
+      "orcid": "0000-0002-0501-5581"
+    }
+  ],
+  "keywords": [
+    "pain assessment",
+    "non-verbal patients",
+    "multimodal fusion",
+    "generative reconstruction",
+    "uncertainty quantification",
+    "Monte Carlo Dropout",
+    "deep ensembles",
+    "occlusion robustness",
+    "federated learning",
+    "leave-one-subject-out",
+    "NIST cybersecurity",
+    "clinical decision support"
+  ],
+  "license": "MIT",
+  "upload_type": "software",
+  "access_right": "open",
+  "language": "eng",
+  "related_identifiers": [
+    {
+      "relation": "isSupplementTo",
+      "identifier": "https://github.com/oussama123-ai/uagmf",
+      "resource_type": "software"
+    }
+  ]
+}
